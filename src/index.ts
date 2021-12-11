@@ -11,21 +11,12 @@ let ctx = canvas.getContext('2d');
 let renderer = new Renderer(ctx, w, h, '#0f1c3d');
 
 let atoms = [
-    {
-        name: 'H',
-        color: 'white',
-        mass: 1,
-        charge: 0,
-        Z: 1,
-        coords: {x: 400, y: 300},
-        taken: false
-    },
     // {
     //     name: 'H',
     //     color: 'white',
     //     mass: 1,
+    //     Z:1,
     //     charge: 0,
-    //     Z: 1,
     //     coords: {x: 300, y: 400},
     //     taken: false
     // },
@@ -33,18 +24,36 @@ let atoms = [
     //     name: 'H',
     //     color: 'white',
     //     mass: 1,
+    //     Z:1,
     //     charge: 0,
-    //     Z: 1,
     //     coords: {x: 400, y: 400},
     //     taken: false
     // },
+    // {
+    //     name: 'H',
+    //     color: 'white',
+    //     mass: 1,
+    //     charge: 0,
+    //     Z: 1,
+    //     coords: {x: 400, y: 300},
+    //     taken: false
+    // },
+    // {
+    //     name: 'Li',
+    //     color: 'gray',
+    //     mass: 7,
+    //     charge: 0,
+    //     Z: 3,
+    //     coords: {x: 500, y: 400},
+    //     taken: false
+    // },
     {
-        name: 'Li',
-        color: 'gray',
-        mass: 7,
+        name: 'O',
+        color: 'red',
+        mass: 16,
         charge: 0,
-        Z: 3,
-        coords: {x: 500, y: 400},
+        Z: 8,
+        coords: {x: 200, y: 400},
         taken: false
     },
     {
@@ -53,7 +62,7 @@ let atoms = [
         mass: 16,
         charge: 0,
         Z: 8,
-        coords: {x: 200, y: 400},
+        coords: {x: 500, y: 600},
         taken: false
     },
     {
@@ -76,7 +85,7 @@ function getDistance(coordsA: coords, coordsB: coords) {
     return Math.sqrt((coordsA.x - coordsB.x) ** 2 + (coordsA.y - coordsB.y) ** 2);
 }
 
-function getCountOfMissElectrons(atom: {mass: number, Z: number}): number{
+function getCountOfMissElectrons(atom: {Z: number}): number{
     let e = atom.Z;
 
     if (e <= 2) return 2-e;
@@ -84,7 +93,7 @@ function getCountOfMissElectrons(atom: {mass: number, Z: number}): number{
     return 0;
 }
 
-function getCountOfLastElectrons(atom: {mass: number, Z: number}): number{
+function getCountOfLastElectrons(atom: {Z: number}): number{
     let e = atom.Z;
 
     if (e <= 2) return e;
@@ -105,32 +114,33 @@ renderer.render((ctx) => {
             if (i == j) continue; // this is current atom
 
             let atomB = atoms[j];
+            if(atomB.taken) continue;
 
             let distance = getDistance(atomA.coords, atomB.coords);
             let distX = atomA.coords.x - atomB.coords.x;
             let distY = atomA.coords.y - atomB.coords.y;
 
             // by electrons
-            if (
-                getCountOfMissElectrons(atomA) == getCountOfLastElectrons(atomB)||
-                getCountOfMissElectrons(atomB) == getCountOfLastElectrons(atomA)
-            ) {
-                let moveX = distX / distance;
-                let moveY = distY / distance;
+            let gravity = Math.abs(getCountOfMissElectrons(atomA) - getCountOfLastElectrons(atomB));
 
-                if(distance < 30) {
-                    atomA.taken = true;
-                    atomB.taken = true;
-                }
+            if (Math.abs(getCountOfMissElectrons(atomB) - getCountOfLastElectrons(atomA)) < gravity)
+                gravity = Math.abs(getCountOfMissElectrons(atomB) - getCountOfLastElectrons(atomA));
 
-                atomA.coords.x += -moveX;
-                atomA.coords.y += -moveY;
-                atomB.coords.x += moveX ;
-                atomB.coords.y += moveY ;
+            let moveX = distX / distance /(gravity+1);
+            let moveY = distY / distance /(gravity+1);
+
+            atomA.coords.x += -moveX;
+            atomA.coords.y += -moveY;
+            atomB.coords.x += moveX ;
+            atomB.coords.y += moveY ;
+
+            if(distance < 50) {
+                atomA.taken = true;
+                atomB.taken = true;
             }
 
             // ions
-            if (distance > 30) {
+            if (distance > 50) {
                 let moveX = distX / distance;
                 let moveY = distY / distance;
 
@@ -156,8 +166,8 @@ renderer.render((ctx) => {
 
             atoms[j] = atomB;
         }
-        atomA.coords.x += offset(-5,5);
-        atomA.coords.y += offset(-5,5);
+        // atomA.coords.x += offset(-5,5);
+        // atomA.coords.y += offset(-5,5);
 
         atoms[i] = atomA;
 
