@@ -1,19 +1,7 @@
 import Renderer from "./classes/Renderer";
 import Atom from "./classes/Atom";
-
-type coords = { x: number, y: number };
-
-interface AtomI {
-    name: string,
-    color: string,
-    mass: number,
-    Z: number,
-    charge: number,
-    coords: coords,
-    taken: boolean
-}
-
-type MoleculeT = AtomI[];
+import {AtomI, coords, MoleculeT} from "./types";
+import ParticleI from "./ParticleI";
 
 let canvas = document.getElementById('space') as HTMLCanvasElement;
 let w = canvas.width = window.innerWidth;
@@ -66,8 +54,7 @@ let particles: (AtomI | MoleculeT)[] = [
         mass: 16,
         charge: 0,
         Z: 8,
-        coords: {x: 100, y: 400},
-        taken: false
+        coords: {x: 100, y: 400}
     },
     {
         name: 'O',
@@ -75,8 +62,7 @@ let particles: (AtomI | MoleculeT)[] = [
         mass: 16,
         charge: 0,
         Z: 8,
-        coords: {x: 500, y: 600},
-        taken: false
+        coords: {x: 500, y: 600}
     },
     {
         name: 'C',
@@ -84,8 +70,7 @@ let particles: (AtomI | MoleculeT)[] = [
         mass: 12,
         charge: 0,
         Z: 6,
-        coords: {x: 200, y: 700},
-        taken: false
+        coords: {x: 200, y: 700}
     }
 ];
 
@@ -98,47 +83,45 @@ function getDistance(coordsA: coords, coordsB: coords) {
     return Math.sqrt((coordsA.x - coordsB.x) ** 2 + (coordsA.y - coordsB.y) ** 2);
 }
 
-function getCountOfMissElectrons(atom: { Z: number }): number {
-    let e = atom.Z;
+function particlesInteraction(particleA: ParticleI, particleB: ParticleI): Atom | Molecule {
+    let coordsA = particleA.getCoords();
+    let coordsB = particleB.getCoords();
 
-    if (e <= 2) return 2 - e;
-    if (e <= 10) return 10 - e;
-    return 0;
-}
-
-function getCountOfLastElectrons(atom: { Z: number }): number {
-    let e = atom.Z;
-
-    if (e <= 2) return e;
-    if (e <= 10) return e - 2;
-    return 0;
-}
-
-function atomsInteraction(atomA: AtomI, atomB: AtomI): false | MoleculeT {
-    let distance = getDistance(atomA.coords, atomB.coords);
-    let distX = atomA.coords.x - atomB.coords.x;
-    let distY = atomA.coords.y - atomB.coords.y;
+    let distance = getDistance(coordsA, coordsB);
+    let distX = coordsA.x - coordsB.x;
+    let distY =coordsA.y - coordsB.y;
 
     // by electrons
-    let gravity = Math.abs(getCountOfMissElectrons(atomA) - getCountOfLastElectrons(atomB));
+    let gravity = Math.abs(particleA.getCountOfMissE() - particleB.getCountOfLastE());
 
-    if (Math.abs(getCountOfMissElectrons(atomB) - getCountOfLastElectrons(atomA)) < gravity)
-        gravity = Math.abs(getCountOfMissElectrons(atomB) - getCountOfLastElectrons(atomA));
+    if (Math.abs(particleB.getCountOfMissE() - particleA.getCountOfLastE()) < gravity)
+        gravity = Math.abs(particleB.getCountOfMissE() - particleA.getCountOfLastE());
 
     let moveX = distX / distance / (gravity + 1);
     let moveY = distY / distance / (gravity + 1);
 
-    atomA.coords.x += -moveX;
-    atomA.coords.y += -moveY;
-    atomB.coords.x += moveX;
-    atomB.coords.y += moveY;
+    particleA.setCoords({
+        x: particleA.getCoords().x -moveX,
+        y: particleA.getCoords().y -moveY,
+    });
 
-    if (distance < 50) {
-        // atomA.taken = true;
-        // atomB.taken = true;
+    particleB.setCoords({
+        x: particleB.getCoords().x + moveX,
+        y: particleB.getCoords().y + moveY,
+    });
 
-        return [atomA, atomB];
-    }
+
+    // atomA.coords.x += -moveX;
+    // atomA.coords.y += -moveY;
+    // atomB.coords.x += moveX;
+    // atomB.coords.y += moveY;
+    //
+    // if (distance < 50) {
+    //     // atomA.taken = true;
+    //     // atomB.taken = true;
+    //
+    //     return [atomA, atomB];
+    // }
 
     return false
 
@@ -170,44 +153,44 @@ function atomsInteraction(atomA: AtomI, atomB: AtomI): false | MoleculeT {
 }
 
 renderer.render((ctx) => {
-    console.log(particles);
+    // console.log(particles);
     for (let i = 0; i < particles.length; i++) {
         ctx.beginPath();
 
         // ===== molecule ===== //
-        if (particles[i] instanceof Array) {
-            let moleculeA = particles[i] as MoleculeT;
-            // console.log(moleculeA)
-
-            for (let j = 0; j < particles.length; j++) {
-                if (i == j) continue; // this is current molecule
-
-                if (particles[j] instanceof Array) continue;
-                let atomB = particles[j] as AtomI;
-                if (atomB == null) continue;
-
-                // let molecule = atomsInteraction(atomA, atomB);
-
-                // save atom updates
-                particles[j] = atomB;
-            }
-
-            for (let atom of moleculeA){
-                ctx.beginPath();
-                ctx.fillStyle = atom.color;
-                ctx.arc(atom.coords.x, atom.coords.y, 50, 0, 360);
-                ctx.fill();
-
-                ctx.font = '50px Arial';
-                ctx.fillStyle = 'green';
-                ctx.textAlign = "center";
-                ctx.fillText(atom.name, atom.coords.x, atom.coords.y);
-                ctx.font = '30px Arial';
-                ctx.fillText(atom.charge.toString(), atom.coords.x, atom.coords.y + 30);
-            }
-
-            continue;
-        };
+        // if (particles[i] instanceof Array) {
+        //     let moleculeA = particles[i] as MoleculeT;
+        //     // console.log(moleculeA)
+        //
+        //     for (let j = 0; j < particles.length; j++) {
+        //         if (i == j) continue; // this is current molecule
+        //
+        //         if (particles[j] instanceof Array) continue;
+        //         let atomB = particles[j] as AtomI;
+        //         if (atomB == null) continue;
+        //
+        //         // let molecule = atomsInteraction(atomA, atomB);
+        //
+        //         // save atom updates
+        //         particles[j] = atomB;
+        //     }
+        //
+        //     for (let atom of moleculeA){
+        //         ctx.beginPath();
+        //         ctx.fillStyle = atom.color;
+        //         ctx.arc(atom.coords.x, atom.coords.y, 50, 0, 360);
+        //         ctx.fill();
+        //
+        //         ctx.font = '50px Arial';
+        //         ctx.fillStyle = 'green';
+        //         ctx.textAlign = "center";
+        //         ctx.fillText(atom.name, atom.coords.x, atom.coords.y);
+        //         ctx.font = '30px Arial';
+        //         ctx.fillText(atom.charge.toString(), atom.coords.x, atom.coords.y + 30);
+        //     }
+        //
+        //     continue;
+        // };
 
         // ===== atom ===== //
         let atomA = particles[i] as AtomI;
@@ -220,7 +203,7 @@ renderer.render((ctx) => {
             let atomB = particles[j] as AtomI;
             if (atomB == null) continue;
 
-            let molecule = atomsInteraction(atomA, atomB);
+            let molecule = particlesInteraction(new Atom(atomA), new Atom(atomB));
 
             // save atom updates
             particles[j] = atomB;
@@ -232,8 +215,8 @@ renderer.render((ctx) => {
         }
 
         // if (!atomA.taken) {
-            atomA.coords.x += offset(-5, 5);
-            atomA.coords.y += offset(-5, 5);
+        //     atomA.coords.x += offset(-5, 5);
+        //     atomA.coords.y += offset(-5, 5);
         // }
 
         ctx.fillStyle = atomA.color;
