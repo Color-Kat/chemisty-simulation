@@ -49,6 +49,24 @@ let particles: (Atom | Molecule)[] = [
     //     coords: {x: 500, y: 400},
     //     taken: false
     // },
+    // new Molecule([
+    //     new Atom( {
+    //         name: 'H',
+    //         color: 'white',
+    //         mass: 1,
+    //         charge: 0,
+    //         Z: 1,
+    //         coords: {x: 400, y: 700}
+    //     }),
+    //     new Atom( {
+    //         name: 'Li',
+    //         color: 'gray',
+    //         mass: 7,
+    //         charge: 0,
+    //         Z: 3,
+    //         coords: {x: 500, y: 400}
+    //     }),
+    // ]),
     new Atom({
         name: 'O',
         color: 'red',
@@ -57,13 +75,22 @@ let particles: (Atom | Molecule)[] = [
         Z: 8,
         coords: {x: 100, y: 400}
     }),
+
     new Atom({
         name: 'O',
         color: 'red',
         mass: 16,
         charge: 0,
         Z: 8,
-        coords: {x: 500, y: 600}
+        coords: {x: 700, y: 100}
+    }),
+    new Atom({
+        name: 'O',
+        color: 'red',
+        mass: 16,
+        charge: 0,
+        Z: 8,
+        coords: {x: 100, y: 100}
     }),
     new Atom({
         name: 'C',
@@ -98,8 +125,8 @@ function particlesInteraction(particleA: ParticleI, particleB: ParticleI): { A: 
     if (Math.abs(particleB.getCountOfMissE() - particleA.getCountOfLastE()) < gravity)
         gravity = Math.abs(particleB.getCountOfMissE() - particleA.getCountOfLastE());
 
-    let moveX = distX / distance / (gravity + 1);
-    let moveY = distY / distance / (gravity + 1);
+    let moveX = distX / distance*3 / (gravity + 1);
+    let moveY = distY / distance*3 / (gravity + 1);
 
     particleA.setCoords({
         x: particleA.getCoords().x - moveX,
@@ -111,22 +138,14 @@ function particlesInteraction(particleA: ParticleI, particleB: ParticleI): { A: 
         y: particleB.getCoords().y + moveY,
     });
 
+    if (particleA instanceof Atom && particleB instanceof Atom && distance < 30) {
+        return {molecule: new Molecule([particleA, particleB])};
+    }
+
     return {
         A: particleA,
         B: particleB,
     };
-
-    // atomA.coords.x += -moveX;
-    // atomA.coords.y += -moveY;
-    // atomB.coords.x += moveX;
-    // atomB.coords.y += moveY;
-    //
-    // if (distance < 50) {
-    //     // atomA.taken = true;
-    //     // atomB.taken = true;
-    //
-    //     return [atomA, atomB];
-    // }
 
     // ions
     // if (distance > 50) {
@@ -161,11 +180,29 @@ function objectToParticle(particle: any): Atom | Molecule | false {
     else return false;
 }
 
-renderer.render((ctx) => {
-    console.log(particles);
-    for (let i = 0; i < particles.length; i++) {
-        ctx.beginPath();
+function drawAtom(ctx: CanvasRenderingContext2D, atom: Atom){
+    ctx.beginPath();
+    ctx.fillStyle = atom.color;
+    ctx.arc(atom.getCoords().x, atom.getCoords().y, 50, 0, 360);
+    ctx.fill();
 
+    // draw atom info
+    ctx.font = '50px Arial';
+    ctx.fillStyle = 'blue';
+    ctx.textAlign = "center";
+    ctx.fillText(atom.name ?? 'M', atom.getCoords().x, atom.getCoords().y);
+    ctx.font = '30px Arial';
+    ctx.fillText((atom.charge ?? '0').toString(), atom.getCoords().x, atom.getCoords().y + 30);
+}
+
+function drawMolecule(ctx: CanvasRenderingContext2D, molecule: Molecule){
+    for(let atom of molecule.atoms) {
+        drawAtom(ctx, atom);
+    }
+}
+
+renderer.render((ctx) => {
+    for (let i = 0; i < particles.length; i++) {
         // ===== molecule ===== //
         // if (particles[i] instanceof Array) {
         //     let moleculeA = particles[i] as MoleculeT;
@@ -201,7 +238,6 @@ renderer.render((ctx) => {
         //     continue;
         // };
 
-        // ===== atom ===== //
         let particleA: any = particles[i];
         if (!particleA) continue;
 
@@ -210,6 +246,7 @@ renderer.render((ctx) => {
 
             let particleB: any = particles[j];
             if (!particleB) continue;
+            if (!particleA) continue;
 
             let interaction = particlesInteraction(particleA, particleB);
 
@@ -217,39 +254,34 @@ renderer.render((ctx) => {
 
             if ('molecule' in interaction) {
                 particles[j] = null;
+                particles[i] = null;
+                particleA= null;
                 particles.push(interaction.molecule);
+                console.log(Object.assign({}, particles))
                 continue;
             }
 
             particleA = interaction.A;
             particleB = interaction.B;
 
-            // save atom updates
+            // save second particle updates
             particles[j] = particleB;
-
-
         }
 
+       if (particleA != null) {
+           if(particleA instanceof Atom) {
+               // particleA.setCoords({
+               //     x: particleA.getCoords().x + offset(-5, 5),
+               //     y: particleA.getCoords().y + offset(-5, 5),
+               // });
 
+               drawAtom(ctx, particleA);
+           } else if(particleA instanceof Molecule){
+               drawMolecule(ctx, particleA);
+           }
 
-        // if (!atomA.taken) {
-        //     atomA.coords.x += offset(-5, 5);
-        //     atomA.coords.y += offset(-5, 5);
-        // }
-
-        ctx.fillStyle = particleA.color;
-        ctx.arc(particleA.coords.x, particleA.coords.y, 50, 0, 360);
-        ctx.fill();
-
-        // draw atom info
-        ctx.font = '50px Arial';
-        ctx.fillStyle = 'blue';
-        ctx.textAlign = "center";
-        ctx.fillText(particleA.name, particleA.coords.x, particleA.coords.y);
-        ctx.font = '30px Arial';
-        ctx.fillText(particleA.charge.toString(), particleA.coords.x, particleA.coords.y + 30);
-
-        // save atom updates
-        particles[i] = particleA;
+           // save atom updates
+           particles[i] = particleA;
+       }
     }
 });

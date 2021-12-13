@@ -3,15 +3,16 @@ import Atom from "./Atom";
 import ParticleI from "../ParticleI";
 
 export default class Molecule implements ParticleI {
-    private atoms: Atom[] = [];
+    // private atoms: Atom[] = [];
 
-    constructor(atoms: AtomI[]) {
-        this.atoms = atoms.map(atom => new Atom(atom));
+    constructor(public atoms: Atom[]) {
+        // this.atoms = atoms.map(atom => new Atom(atom));
     }
 
     public getCoords(): coords {
         let atomsCount = 0;
-        let x: number, y: number;
+        let x: number = 0;
+        let y: number = 0;
 
         for (let atom of this.atoms) {
             atomsCount++;
