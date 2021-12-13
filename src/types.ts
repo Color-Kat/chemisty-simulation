@@ -1,3 +1,6 @@
+import Atom from "./classes/Atom";
+import Molecule from "./classes/Molecule";
+
 export type coords = { x: number, y: number };
 
 export interface AtomI {
@@ -10,3 +13,5 @@ export interface AtomI {
 }
 
 export type MoleculeT = AtomI[];
+
+export type ParticleT = (Atom|Molecule);
