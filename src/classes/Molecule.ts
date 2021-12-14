@@ -47,21 +47,44 @@ export default class Molecule implements ParticleI {
         for (let i_atom of this.atoms) {
             let atom = new Atom(i_atom);
 
-            lastLayerE += atom.getCountOfLastE();
+            lastLayerE -= atom.getCountOfLastE();
         }
 
-        return lastLayerE;
+        return Math.abs(lastLayerE);
     }
 
-    // не хватает - 2 (6)
-    // 1 уже (1)
-    //
-
     public getCountOfMissE(): number {
-        let lastE = this.getCountOfLastE();
+        let maxMissAtom = 0;
+        let missE = 0;
 
-        if (lastE <= 2) return 2 - lastE;
-        if (lastE <= 8) return 8 - lastE;
-        return 0;
+        // get the
+        for (let i_atom of this.atoms) {
+            let atom = new Atom(i_atom);
+            if (atom.getCountOfMissE() > maxMissAtom) {
+                maxMissAtom = atom.getCountOfMissE();
+            }
+        }
+
+        missE = 2*  maxMissAtom;
+        console.log('strat',missE)
+
+        for (let i_atom of this.atoms) {
+            let atom = new Atom(i_atom);
+
+            missE -= atom.getCountOfMissE();
+
+            console.log(missE)
+        }
+        console.log('-------------')
+
+        // missE -= maxMissAtom;
+
+        // console.log(maxMissAtom)
+
+        return Math.abs(missE);
+    }
+
+    public addAtom(atom: Atom) {
+        this.atoms.push(atom);
     }
 }

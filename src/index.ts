@@ -138,8 +138,37 @@ function particlesInteraction(particleA: ParticleI, particleB: ParticleI): { A: 
         y: particleB.getCoords().y + moveY,
     });
 
-    if (particleA instanceof Atom && particleB instanceof Atom && distance < 30) {
+
+    if (
+        distance < 30 &&
+        particleA instanceof Atom &&
+        particleB instanceof Atom &&
+        particleA.getCountOfMissE() != 0 &&
+        particleB.getCountOfMissE() != 0
+    ) {
+        console.log(particleA.getCountOfMissE(), particleB.getCountOfMissE())
+
         return {molecule: new Molecule([particleA, particleB])};
+    }
+
+    // console.log(particleA.getCountOfMissE() != 0,
+    //     particleB.getCountOfMissE() != 0)
+
+    if (
+        distance < 70 &&
+        (
+            // particleA instanceof Atom && particleB instanceof Molecule
+            particleA instanceof Molecule && particleB instanceof Atom
+            &&
+            particleA.getCountOfMissE() != 0 &&
+            particleB.getCountOfMissE() != 0
+        ) ) {
+
+        // console.log(particleA.getCountOfMissE(),
+        //     particleB.getCountOfMissE())
+        particleA.addAtom(particleB);
+
+        return {molecule: particleA};
     }
 
     return {
@@ -203,41 +232,6 @@ function drawMolecule(ctx: CanvasRenderingContext2D, molecule: Molecule){
 
 renderer.render((ctx) => {
     for (let i = 0; i < particles.length; i++) {
-        // ===== molecule ===== //
-        // if (particles[i] instanceof Array) {
-        //     let moleculeA = particles[i] as MoleculeT;
-        //     // console.log(moleculeA)
-        //
-        //     for (let j = 0; j < particles.length; j++) {
-        //         if (i == j) continue; // this is current molecule
-        //
-        //         if (particles[j] instanceof Array) continue;
-        //         let atomB = particles[j] as AtomI;
-        //         if (atomB == null) continue;
-        //
-        //         // let molecule = atomsInteraction(atomA, atomB);
-        //
-        //         // save atom updates
-        //         particles[j] = atomB;
-        //     }
-        //
-        //     for (let atom of moleculeA){
-        //         ctx.beginPath();
-        //         ctx.fillStyle = atom.color;
-        //         ctx.arc(atom.coords.x, atom.coords.y, 50, 0, 360);
-        //         ctx.fill();
-        //
-        //         ctx.font = '50px Arial';
-        //         ctx.fillStyle = 'green';
-        //         ctx.textAlign = "center";
-        //         ctx.fillText(atom.name, atom.coords.x, atom.coords.y);
-        //         ctx.font = '30px Arial';
-        //         ctx.fillText(atom.charge.toString(), atom.coords.x, atom.coords.y + 30);
-        //     }
-        //
-        //     continue;
-        // };
-
         let particleA: any = particles[i];
         if (!particleA) continue;
 
@@ -257,7 +251,10 @@ renderer.render((ctx) => {
                 particles[i] = null;
                 particleA= null;
                 particles.push(interaction.molecule);
-                console.log(Object.assign({}, particles))
+                console.log(interaction.molecule, particles, interaction.molecule.getCountOfMissE())
+
+                // console.log(Object.assign({}, particles))
+                // console.log(interaction.molecule, interaction.molecule.getCoords())
                 continue;
             }
 
@@ -270,13 +267,17 @@ renderer.render((ctx) => {
 
        if (particleA != null) {
            if(particleA instanceof Atom) {
-               // particleA.setCoords({
-               //     x: particleA.getCoords().x + offset(-5, 5),
-               //     y: particleA.getCoords().y + offset(-5, 5),
-               // });
+               particleA.setCoords({
+                   x: particleA.getCoords().x + offset(-5, 5),
+                   y: particleA.getCoords().y + offset(-5, 5),
+               });
 
                drawAtom(ctx, particleA);
            } else if(particleA instanceof Molecule){
+               particleA.setCoords({
+                   x: particleA.getCoords().x + offset(-5, 5),
+                   y: particleA.getCoords().y + offset(-5, 5),
+               });
                drawMolecule(ctx, particleA);
            }
 
