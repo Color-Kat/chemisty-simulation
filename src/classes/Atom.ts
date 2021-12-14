@@ -28,10 +28,18 @@ export default class Atom implements ParticleI{
 
     public getCountOfMissE(): number {
         let e = this.Z;
+        let miss = 0;
 
-        if (e <= 2) return 2 - e;
-        if (e <= 10) return 10 - e;
-        return 0;
+        if (e <= 2) miss = 2 - e;
+        if (e <= 10) {
+            miss = 10 - e;
+            if (miss > 4) {
+                miss = 8 - miss;
+            }
+            // console.log(this.name, miss)
+        }
+
+        return Math.abs(miss);
     }
 
     public getCountOfLastE(): number {

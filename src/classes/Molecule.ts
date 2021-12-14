@@ -66,20 +66,14 @@ export default class Molecule implements ParticleI {
         }
 
         missE = 2*  maxMissAtom;
-        console.log('strat',missE)
 
+        // console.log('start: ', missE)
         for (let i_atom of this.atoms) {
             let atom = new Atom(i_atom);
-
             missE -= atom.getCountOfMissE();
-
-            console.log(missE)
+            // console.log(atom.getCountOfMissE());
         }
-        console.log('-------------')
-
-        // missE -= maxMissAtom;
-
-        // console.log(maxMissAtom)
+        // console.log('--------')
 
         return Math.abs(missE);
     }

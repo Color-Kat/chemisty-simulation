@@ -12,43 +12,41 @@ let ctx = canvas.getContext('2d');
 
 let renderer = new Renderer(ctx, w, h, '#0f1c3d');
 
+
+
 let particles: (Atom | Molecule)[] = [
-    // {
-    //     name: 'H',
-    //     color: 'white',
-    //     mass: 1,
-    //     Z: 1,
-    //     charge: 0,
-    //     coords: {x: 800, y: 400},
-    //     taken: false
-    // },
-    // {
-    //     name: 'H',
-    //     color: 'white',
-    //     mass: 1,
-    //     Z: 1,
-    //     charge: 0,
-    //     coords: {x: 600, y: 400},
-    //     taken: false
-    // },
-    // {
-    //     name: 'H',
-    //     color: 'white',
-    //     mass: 1,
-    //     charge: 0,
-    //     Z: 1,
-    //     coords: {x: 400, y: 700},
-    //     taken: false
-    // },
-    // {
-    //     name: 'Li',
-    //     color: 'gray',
-    //     mass: 7,
-    //     charge: 0,
-    //     Z: 3,
-    //     coords: {x: 500, y: 400},
-    //     taken: false
-    // },
+    new Atom({
+        name: 'H',
+        color: 'white',
+        mass: 1,
+        Z: 1,
+        charge: 0,
+        coords: {x: 600, y: 900}
+    }),
+    new Atom({
+        name: 'H',
+        color: 'white',
+        mass: 1,
+        charge: 0,
+        Z: 1,
+        coords: {x: 600, y: 800}
+    }),
+    new Atom({
+        name: 'H',
+        color: 'white',
+        mass: 1,
+        charge: 0,
+        Z: 1,
+        coords: {x: 0, y: 0}
+    }),
+    new Atom({
+        name: 'Li',
+        color: 'gray',
+        mass: 9,
+        charge: 0,
+        Z: 3,
+        coords: {x: 100, y: 200}
+    }),
     // new Molecule([
     //     new Atom( {
     //         name: 'H',
@@ -67,14 +65,14 @@ let particles: (Atom | Molecule)[] = [
     //         coords: {x: 500, y: 400}
     //     }),
     // ]),
-    new Atom({
-        name: 'O',
-        color: 'red',
-        mass: 16,
-        charge: 0,
-        Z: 8,
-        coords: {x: 100, y: 400}
-    }),
+    // new Atom({
+    //     name: 'O',
+    //     color: 'red',
+    //     mass: 16,
+    //     charge: 0,
+    //     Z: 8,
+    //     coords: {x: 100, y: 400}
+    // }),
 
     new Atom({
         name: 'O',
@@ -84,22 +82,22 @@ let particles: (Atom | Molecule)[] = [
         Z: 8,
         coords: {x: 700, y: 100}
     }),
-    new Atom({
-        name: 'O',
-        color: 'red',
-        mass: 16,
-        charge: 0,
-        Z: 8,
-        coords: {x: 100, y: 100}
-    }),
-    new Atom({
-        name: 'C',
-        color: 'black',
-        mass: 12,
-        charge: 0,
-        Z: 6,
-        coords: {x: 200, y: 700}
-    })
+    // new Atom({
+    //     name: 'O',
+    //     color: 'red',
+    //     mass: 16,
+    //     charge: 0,
+    //     Z: 8,
+    //     coords: {x: 100, y: 100}
+    // }),
+    // new Atom({
+    //     name: 'C',
+    //     color: 'black',
+    //     mass: 12,
+    //     charge: 0,
+    //     Z: 6,
+    //     coords: {x: 200, y: 700}
+    // })
 ];
 
 
@@ -125,8 +123,8 @@ function particlesInteraction(particleA: ParticleI, particleB: ParticleI): { A: 
     if (Math.abs(particleB.getCountOfMissE() - particleA.getCountOfLastE()) < gravity)
         gravity = Math.abs(particleB.getCountOfMissE() - particleA.getCountOfLastE());
 
-    let moveX = distX / distance*3 / (gravity + 1);
-    let moveY = distY / distance*3 / (gravity + 1);
+    let moveX = distX / distance * 3 / (gravity + 1);
+    let moveY = distY / distance * 3 / (gravity + 1);
 
     particleA.setCoords({
         x: particleA.getCoords().x - moveX,
@@ -137,7 +135,6 @@ function particlesInteraction(particleA: ParticleI, particleB: ParticleI): { A: 
         x: particleB.getCoords().x + moveX,
         y: particleB.getCoords().y + moveY,
     });
-
 
     if (
         distance < 30 &&
@@ -151,21 +148,19 @@ function particlesInteraction(particleA: ParticleI, particleB: ParticleI): { A: 
         return {molecule: new Molecule([particleA, particleB])};
     }
 
-    // console.log(particleA.getCountOfMissE() != 0,
-    //     particleB.getCountOfMissE() != 0)
-
+    // molecule and atom
+    // console.log(particleA, particleA.getCountOfMissE(),particleB,  particleB.getCountOfLastE())
     if (
         distance < 70 &&
         (
-            // particleA instanceof Atom && particleB instanceof Molecule
             particleA instanceof Molecule && particleB instanceof Atom
             &&
-            particleA.getCountOfMissE() != 0 &&
-            particleB.getCountOfMissE() != 0
-        ) ) {
+            particleA.getCountOfMissE() - particleB.getCountOfMissE() >= 0 &&
+            particleB.getCountOfMissE() - particleA.getCountOfMissE() >= 0
+            // particleA.getCountOfMissE() != 0 &&
+            // particleB.getCountOfMissE() != 0
+        )) {
 
-        // console.log(particleA.getCountOfMissE(),
-        //     particleB.getCountOfMissE())
         particleA.addAtom(particleB);
 
         return {molecule: particleA};
@@ -177,25 +172,30 @@ function particlesInteraction(particleA: ParticleI, particleB: ParticleI): { A: 
     };
 
     // ions
-    // if (distance > 50) {
+    // if (distance > 500 && particleA instanceof Atom && particleB instanceof Atom) {
     //     let moveX = distX / distance;
     //     let moveY = distY / distance;
     //
     //     // attracted
-    //     if (atomA.charge + atomB.charge === 0 && atomA.charge !== 0 && atomB.charge !== 0) {
-    //         atomA.coords.x += -moveX;
-    //         atomA.coords.y += -moveY;
-    //         atomB.coords.x += moveX;
-    //         atomB.coords.y += moveY;
+    //     if (particleA.charge + particleB.charge === 0 && particleA.charge !== 0 && particleB.charge !== 0) {
+    //         particleA.setCoords({
+    //             x: particleA.getCoords().x - moveX,
+    //             y: particleA.getCoords().y - moveY
+    //         });
+    //
+    //         particleB.setCoords({
+    //             x: particleB.getCoords().x + moveX,
+    //             y: particleB.getCoords().y + moveY
+    //         });
     //     }
     //
     //     // repel
-    //     if (atomA.charge === atomB.charge && atomA.charge !== 0) {
-    //         atomA.coords.x += moveX;
-    //         atomA.coords.y += moveY;
-    //         atomB.coords.x += -moveX;
-    //         atomB.coords.y += -moveY;
-    //     }
+    //     // if (atomA.charge === particleB.charge && atomA.charge !== 0) {
+    //     //     atomA.coords.x += moveX;
+    //     //     atomA.coords.y += moveY;
+    //     //     particleB.coords.x += -moveX;
+    //     //     particleB.coords.y += -moveY;
+    //     // }
     // } else {
     //     // atomA.charge = 0;
     //     // atomB.charge = 0;
@@ -209,23 +209,23 @@ function objectToParticle(particle: any): Atom | Molecule | false {
     else return false;
 }
 
-function drawAtom(ctx: CanvasRenderingContext2D, atom: Atom){
+function drawAtom(ctx: CanvasRenderingContext2D, atom: Atom) {
     ctx.beginPath();
     ctx.fillStyle = atom.color;
-    ctx.arc(atom.getCoords().x, atom.getCoords().y, 50, 0, 360);
+    ctx.arc(atom.getCoords().x, atom.getCoords().y, 40, 0, 360);
     ctx.fill();
 
     // draw atom info
-    ctx.font = '50px Arial';
+    ctx.font = '40px Arial';
     ctx.fillStyle = 'blue';
     ctx.textAlign = "center";
-    ctx.fillText(atom.name ?? 'M', atom.getCoords().x, atom.getCoords().y);
-    ctx.font = '30px Arial';
-    ctx.fillText((atom.charge ?? '0').toString(), atom.getCoords().x, atom.getCoords().y + 30);
+    ctx.fillText(atom.name, atom.getCoords().x, atom.getCoords().y);
+    ctx.font = '25px Arial';
+    ctx.fillText(atom.Z.toString(), atom.getCoords().x, atom.getCoords().y + 30);
 }
 
-function drawMolecule(ctx: CanvasRenderingContext2D, molecule: Molecule){
-    for(let atom of molecule.atoms) {
+function drawMolecule(ctx: CanvasRenderingContext2D, molecule: Molecule) {
+    for (let atom of molecule.atoms) {
         drawAtom(ctx, atom);
     }
 }
@@ -244,12 +244,12 @@ renderer.render((ctx) => {
 
             let interaction = particlesInteraction(particleA, particleB);
 
-            if(!interaction) continue;
+            if (!interaction) continue;
 
             if ('molecule' in interaction) {
                 particles[j] = null;
                 particles[i] = null;
-                particleA= null;
+                particleA = null;
                 particles.push(interaction.molecule);
                 console.log(interaction.molecule, particles, interaction.molecule.getCountOfMissE())
 
@@ -265,24 +265,24 @@ renderer.render((ctx) => {
             particles[j] = particleB;
         }
 
-       if (particleA != null) {
-           if(particleA instanceof Atom) {
-               particleA.setCoords({
-                   x: particleA.getCoords().x + offset(-5, 5),
-                   y: particleA.getCoords().y + offset(-5, 5),
-               });
+        if (particleA != null) {
+            if (particleA instanceof Atom) {
+                particleA.setCoords({
+                    x: particleA.getCoords().x + offset(-5, 5),
+                    y: particleA.getCoords().y + offset(-5, 5),
+                });
 
-               drawAtom(ctx, particleA);
-           } else if(particleA instanceof Molecule){
-               particleA.setCoords({
-                   x: particleA.getCoords().x + offset(-5, 5),
-                   y: particleA.getCoords().y + offset(-5, 5),
-               });
-               drawMolecule(ctx, particleA);
-           }
+                drawAtom(ctx, particleA);
+            } else if (particleA instanceof Molecule) {
+                particleA.setCoords({
+                    x: particleA.getCoords().x + offset(-5, 5),
+                    y: particleA.getCoords().y + offset(-5, 5),
+                });
+                drawMolecule(ctx, particleA);
+            }
 
-           // save atom updates
-           particles[i] = particleA;
-       }
+            // save atom updates
+            particles[i] = particleA;
+        }
     }
 });
