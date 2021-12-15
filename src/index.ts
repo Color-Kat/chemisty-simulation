@@ -3,6 +3,8 @@ import Atom from "./classes/Atom";
 import {AtomI, coords, MoleculeT, ParticleT} from "./types";
 import ParticleI from "./ParticleI";
 import Molecule from "./classes/Molecule";
+import controlPanel from "./controlPanel";
+import atomsList from "./atomsList";
 
 let canvas = document.getElementById('space') as HTMLCanvasElement;
 let w = canvas.width = window.innerWidth;
@@ -12,94 +14,60 @@ let ctx = canvas.getContext('2d');
 
 let renderer = new Renderer(ctx, w, h, '#0f1c3d');
 
-
-
 let particles: (Atom | Molecule)[] = [
-    new Atom({
-        name: 'H',
-        color: 'white',
-        mass: 1,
-        Z: 1,
-        charge: 0,
-        coords: {x: 600, y: 900}
-    }),
-    new Atom({
-        name: 'H',
-        color: 'white',
-        mass: 1,
-        charge: 0,
-        Z: 1,
-        coords: {x: 600, y: 800}
-    }),
-    new Atom({
-        name: 'H',
-        color: 'white',
-        mass: 1,
-        charge: 0,
-        Z: 1,
-        coords: {x: 0, y: 0}
-    }),
-    new Atom({
-        name: 'Li',
-        color: 'gray',
-        mass: 9,
-        charge: 0,
-        Z: 3,
-        coords: {x: 100, y: 200}
-    }),
-    // new Molecule([
-    //     new Atom( {
-    //         name: 'H',
-    //         color: 'white',
-    //         mass: 1,
-    //         charge: 0,
-    //         Z: 1,
-    //         coords: {x: 400, y: 700}
-    //     }),
-    //     new Atom( {
-    //         name: 'Li',
-    //         color: 'gray',
-    //         mass: 7,
-    //         charge: 0,
-    //         Z: 3,
-    //         coords: {x: 500, y: 400}
-    //     }),
-    // ]),
+    // new Atom({
+    //     name: 'H',
+    //     color: 'white',
+    //     mass: 1,
+    //     Z: 1,
+    //     charge: 0,
+    //     coords: {x: 600, y: 900}
+    // }),
+    // new Atom({
+    //     name: 'H',
+    //     color: 'white',
+    //     mass: 1,
+    //     charge: 0,
+    //     Z: 1,
+    //     coords: {x: 600, y: 800}
+    // }),
+    // new Atom({
+    //     name: 'H',
+    //     color: 'white',
+    //     mass: 1,
+    //     charge: 0,
+    //     Z: 1,
+    //     coords: {x: 0, y: 0}
+    // }),
+    // new Atom({
+    //     name: 'Li',
+    //     color: 'gray',
+    //     mass: 9,
+    //     charge: 0,
+    //     Z: 3,
+    //     coords: {x: 100, y: 200}
+    // }),
     // new Atom({
     //     name: 'O',
     //     color: 'red',
     //     mass: 16,
     //     charge: 0,
     //     Z: 8,
-    //     coords: {x: 100, y: 400}
+    //     coords: {x: 700, y: 100}
     // }),
-
-    new Atom({
-        name: 'O',
-        color: 'red',
-        mass: 16,
-        charge: 0,
-        Z: 8,
-        coords: {x: 700, y: 100}
-    }),
-    // new Atom({
-    //     name: 'O',
-    //     color: 'red',
-    //     mass: 16,
-    //     charge: 0,
-    //     Z: 8,
-    //     coords: {x: 100, y: 100}
-    // }),
-    // new Atom({
-    //     name: 'C',
-    //     color: 'black',
-    //     mass: 12,
-    //     charge: 0,
-    //     Z: 6,
-    //     coords: {x: 200, y: 700}
-    // })
 ];
 
+controlPanel(document.getElementById('panel'), (id)=>{
+    particles.push(
+        new Atom({
+            ...atomsList[id],
+            coords: {
+                x: 300,
+                y: 300
+            }
+        })
+    )
+});
 
 function offset(min: number, max: number) {
     return Math.random() * (max - min) + min;

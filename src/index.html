@@ -15,19 +15,62 @@
             width: 100%;
             height: 100%;
         }
+
+        #panel{
+            width: 100%;
+            overflow-x: scroll;
+            height: 450px;
+            background: rgba(0, 0, 0, 0.30);
+            position: absolute;
+            color: #fbf9ff;
+            font-family: Arial;
+            display: flex;
+        }
+
+        .chem_elem{
+            position: relative;
+            width: 70px;
+            height: 100px;
+            border: 2px solid #11385b;
+            margin: 3px;
+            background: rgba(81, 97, 171, 0.87);
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.55);
+            align-items: center;
+        }
+
+        .chem_elem * {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .chem_elem__bg{
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .chem_elem.checked{
+            background: #12276c !important;
+        }
+
+        input[type="radio"]{
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            opacity: 0;
+        }
     </style>
 </head>
 <body>
-<!--    <div id="control-panel">-->
-<!--        <input type="radio" value="H" name="H" id="H">-->
-<!--        <label for="H">H</label>-->
+    <div id="panel">
 
-<!--        <input type="radio" value="He" name="He"  id="He">-->
-<!--        <label for="He">He</label>-->
-
-<!--        <input type="radio" value="Li" name="Li"  id=Li>-->
-<!--        <label for="Li">Li</label>-->
-<!--    </div>-->
+    </div>
 
     <canvas id="space">Your browser doesn't support canvas, you are very old;)</canvas>
 
