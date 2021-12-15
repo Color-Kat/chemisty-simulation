@@ -57,16 +57,21 @@ let particles: (Atom | Molecule)[] = [
     // }),
 ];
 
-controlPanel(document.getElementById('panel'), (id)=>{
-    particles.push(
-        new Atom({
-            ...atomsList[id],
+let selectedParticle: any = null;
+
+controlPanel(document.getElementById('panel'), (id) => {
+    selectedParticle = atomsList[id];
+});
+
+canvas.addEventListener('click', function(e){
+    if(selectedParticle)
+        particles.push(new Atom({
+            ...selectedParticle,
             coords: {
-                x: 300,
-                y: 300
+                x: e.pageX,
+                y: e.pageY
             }
-        })
-    )
+        }))
 });
 
 function offset(min: number, max: number) {
