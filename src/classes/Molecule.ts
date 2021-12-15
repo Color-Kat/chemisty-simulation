@@ -6,6 +6,8 @@ export default class Molecule implements ParticleI {
     // private atoms: Atom[] = [];
 
     constructor(public atoms: Atom[]) {
+        // console.log(this.atoms);
+        // console.log(this.getCoords());
         // this.atoms = atoms.map(atom => new Atom(atom));
     }
 
@@ -28,6 +30,7 @@ export default class Molecule implements ParticleI {
 
     public setCoords(coords: coords) {
         let molecule_coords = this.getCoords();
+
         let molecule_offset = {
             x: coords.x - molecule_coords.x,
             y: coords.y - molecule_coords.y,
@@ -36,7 +39,7 @@ export default class Molecule implements ParticleI {
         for (let atom of this.atoms) {
             atom.setCoords({
                 x: atom.getCoords().x + molecule_offset.x,
-                y: atom.getCoords().x + molecule_offset.y,
+                y: atom.getCoords().y + molecule_offset.y,
             });
         }
     }

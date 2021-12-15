@@ -63,8 +63,8 @@ controlPanel(document.getElementById('panel'), (id) => {
     selectedParticle = atomsList[id];
 });
 
-canvas.addEventListener('click', function(e){
-    if(selectedParticle)
+canvas.addEventListener('click', function (e) {
+    if (selectedParticle)
         particles.push(new Atom({
             ...selectedParticle,
             coords: {
@@ -90,14 +90,24 @@ function particlesInteraction(particleA: ParticleI, particleB: ParticleI): { A: 
     let distX = coordsA.x - coordsB.x;
     let distY = coordsA.y - coordsB.y;
 
+    if (
+        distance < 50 &&
+        particleA instanceof Atom &&
+        particleB instanceof Atom &&
+        particleA.getCountOfMissE() != 0 &&
+        particleB.getCountOfMissE() != 0
+    ) {
+        return {molecule: new Molecule([particleA, particleB])};
+    }
+
     // by electrons
     let gravity = Math.abs(particleA.getCountOfMissE() - particleB.getCountOfLastE());
 
     if (Math.abs(particleB.getCountOfMissE() - particleA.getCountOfLastE()) < gravity)
         gravity = Math.abs(particleB.getCountOfMissE() - particleA.getCountOfLastE());
 
-    let moveX = distX / distance * 3 / (gravity + 1);
-    let moveY = distY / distance * 3 / (gravity + 1);
+    let moveX = distX / distance * 2 / (gravity + 1);
+    let moveY = distY / distance * 2 / (gravity + 1);
 
     particleA.setCoords({
         x: particleA.getCoords().x - moveX,
@@ -109,29 +119,24 @@ function particlesInteraction(particleA: ParticleI, particleB: ParticleI): { A: 
         y: particleB.getCoords().y + moveY,
     });
 
-    if (
-        distance < 30 &&
-        particleA instanceof Atom &&
-        particleB instanceof Atom &&
-        particleA.getCountOfMissE() != 0 &&
-        particleB.getCountOfMissE() != 0
-    ) {
-        console.log(particleA.getCountOfMissE(), particleB.getCountOfMissE())
-
-        return {molecule: new Molecule([particleA, particleB])};
-    }
 
     // molecule and atom
-    // console.log(particleA, particleA.getCountOfMissE(),particleB,  particleB.getCountOfLastE())
+    // if (distance < 50 &&
+    //
+    //     particleA instanceof Molecule && particleB instanceof Atom)
+    //     console.log( particleA.getCountOfMissE() - particleB.getCountOfMissE(),
+    //         particleB.getCountOfMissE() - particleA.getCountOfMissE());
+
     if (
-        distance < 70 &&
+        distance < 50 &&
         (
             particleA instanceof Molecule && particleB instanceof Atom
             &&
-            particleA.getCountOfMissE() - particleB.getCountOfMissE() >= 0 &&
-            particleB.getCountOfMissE() - particleA.getCountOfMissE() >= 0
-            // particleA.getCountOfMissE() != 0 &&
-            // particleB.getCountOfMissE() != 0
+            particleA.getCountOfMissE() - particleB.getCountOfLastE() >= 0
+            // (particleA.getCountOfMissE() - particleB.getCountOfLastE() >= 0 ||
+            //     particleB.getCountOfMissE() - particleA.getCountOfLastE() >= 0)
+            // (particleA.getCountOfMissE() - particleB.getCountOfMissE() >= 0 ||
+            // particleB.getCountOfMissE() - particleA.getCountOfMissE() >= 0)
         )) {
 
         particleA.addAtom(particleB);
@@ -224,10 +229,8 @@ renderer.render((ctx) => {
                 particles[i] = null;
                 particleA = null;
                 particles.push(interaction.molecule);
-                console.log(interaction.molecule, particles, interaction.molecule.getCountOfMissE())
+                // console.log(interaction.molecule, particles, interaction.molecule.getCountOfMissE())
 
-                // console.log(Object.assign({}, particles))
-                // console.log(interaction.molecule, interaction.molecule.getCoords())
                 continue;
             }
 

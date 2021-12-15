@@ -25,12 +25,6 @@ export default function (panel: HTMLElement, callback: (id: number)=> void){
             radio.setAttribute('checked', '');
         }
 
-            // atomElem.innerHTML = `<h3>${atom.name}</h3><br><h5>${atom.Z}</h5>`;
-        // <div class="chem_elem">
-        //      <input type="radio" value="H" name="chemical_elements" id="H">
-        //     <h1>H</h1>
-        //     <h2>1</h2>
-        // </div>
         panel.append(atomElem);
     }
 

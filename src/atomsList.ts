@@ -21,6 +21,13 @@ export default [
         Z: 4,
     },
     {
+        name: 'C',
+        color: 'black',
+        mass: 12,
+        charge: 0,
+        Z: 6,
+    },
+    {
         name: 'O',
         color: 'red',
         mass: 16,
@@ -28,10 +35,10 @@ export default [
         Z: 8,
     },
     {
-        name: 'C',
-        color: 'black',
-        mass: 12,
+        name: 'Na',
+        color: 'yellow',
+        mass: 23,
         charge: 0,
-        Z: 6,
-    }
+        Z: 11,
+    },
 ];

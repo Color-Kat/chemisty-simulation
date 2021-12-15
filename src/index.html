@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Chemistry simulation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <style>
         html, body{
             height: 100%;
@@ -19,12 +20,14 @@
         #panel{
             width: 100%;
             overflow-x: scroll;
-            height: 450px;
+            /*height: 450px;*/
             background: rgba(0, 0, 0, 0.30);
             position: absolute;
             color: #fbf9ff;
             font-family: Arial;
             display: flex;
+            flex-wrap: wrap;
+            margin: 0 auto;
         }
 
         .chem_elem{

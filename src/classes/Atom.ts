@@ -1,24 +1,24 @@
 import {AtomI, coords} from '../types';
 import ParticleI from "../ParticleI";
 
-export default class Atom implements ParticleI{
-   public name: string;
-   public color: string;
-   public mass: number;
-   public Z: number;
-   public charge: number;
-   public coords: coords;
+export default class Atom implements ParticleI {
+    public name: string;
+    public color: string;
+    public mass: number;
+    public Z: number;
+    public charge: number;
+    public coords: coords;
 
-    constructor( atom: AtomI ) {
+    constructor(atom: AtomI) {
         this.name = atom.name;
-        this.color= atom.color;
-        this.mass= atom.mass;
-        this.Z= atom.Z;
-        this.charge= atom.charge;
-        this.coords= atom.coords;
+        this.color = atom.color;
+        this.mass = atom.mass;
+        this.Z = atom.Z;
+        this.charge = atom.charge;
+        this.coords = atom.coords;
     }
 
-    public getCoords(): coords{
+    public getCoords(): coords {
         return this.coords;
     }
 
@@ -30,7 +30,12 @@ export default class Atom implements ParticleI{
         let e = this.Z;
         let miss = 0;
 
-        if (e <= 2) miss = 2 - e;
+        if(e <= (18 + 8 + 2)) {
+            miss = (18 + 8 + 2) - e;
+            if (miss > 9) {
+                miss = 18 - miss;
+            }
+        }
         if (e <= 10) {
             miss = 10 - e;
             if (miss > 4) {
@@ -38,6 +43,8 @@ export default class Atom implements ParticleI{
             }
             // console.log(this.name, miss)
         }
+        if (e <= 2) miss = 2 - e;
+
 
         return Math.abs(miss);
     }
