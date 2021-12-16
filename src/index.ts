@@ -121,11 +121,10 @@ function particlesInteraction(particleA: ParticleI, particleB: ParticleI): { A: 
 
 
     // molecule and atom
-    // if (distance < 50 &&
-    //
-    //     particleA instanceof Molecule && particleB instanceof Atom)
-    //     console.log( particleA.getCountOfMissE() - particleB.getCountOfMissE(),
-    //         particleB.getCountOfMissE() - particleA.getCountOfMissE());
+    if (distance < 50 &&
+
+        particleA instanceof Molecule && particleB instanceof Atom)
+        console.log(particleA, particleA.getCountOfMissE(), particleB.getCountOfLastE());
 
     if (
         distance < 50 &&

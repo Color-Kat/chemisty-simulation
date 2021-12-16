@@ -45,7 +45,6 @@ export default class Atom implements ParticleI {
         }
         if (e <= 2) miss = 2 - e;
 
-
         return Math.abs(miss);
     }
 
@@ -54,6 +53,7 @@ export default class Atom implements ParticleI {
 
         if (e <= 2) return e;
         if (e <= 10) return e - 2;
+        if (e <= (2+8+18)) return e - (2+8);
         return 0;
     }
 }
