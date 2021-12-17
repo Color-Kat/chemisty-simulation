@@ -91,7 +91,7 @@ function particlesInteraction(particleA: ParticleI, particleB: ParticleI): { A: 
     let distY = coordsA.y - coordsB.y;
 
     if (
-        distance < 50 &&
+        distance < 80 &&
         particleA instanceof Atom &&
         particleB instanceof Atom &&
         particleA.getCountOfMissE() != 0 &&
@@ -106,8 +106,8 @@ function particlesInteraction(particleA: ParticleI, particleB: ParticleI): { A: 
     if (Math.abs(particleB.getCountOfMissE() - particleA.getCountOfLastE()) < gravity)
         gravity = Math.abs(particleB.getCountOfMissE() - particleA.getCountOfLastE());
 
-    let moveX = distX / distance * 2 / (gravity + 1);
-    let moveY = distY / distance * 2 / (gravity + 1);
+    let moveX = distX / distance * 2 / (gravity + 1)**2;
+    let moveY = distY / distance * 2 / (gravity + 1)**2;
 
     particleA.setCoords({
         x: particleA.getCoords().x - moveX,
@@ -126,15 +126,15 @@ function particlesInteraction(particleA: ParticleI, particleB: ParticleI): { A: 
     //     particleA instanceof Molecule && particleB instanceof Atom)
     //     console.log(particleA, particleA.getCountOfMissE(), particleB.getCountOfLastE());
 
-    if (
-        distance < 50 &&
-        (
-            particleA instanceof Molecule && particleB instanceof Molecule
-        )) console.log( particleA.getCountOfMissE(), particleB.getCountOfMissE())
+    // if (
+    //     distance < 50 &&
+    //     (
+    //         particleA instanceof Molecule && particleB instanceof Molecule
+    //     )) console.log( particleA.getCountOfMissE(), particleB.getCountOfMissE())
 
     // molecule + molecule
     if (
-        distance < 50 &&
+        distance < 80 &&
         (
             particleA instanceof Molecule && particleB instanceof Molecule
             &&
@@ -148,9 +148,11 @@ function particlesInteraction(particleA: ParticleI, particleB: ParticleI): { A: 
 
 
     if (
-        distance < 50 &&
+        distance < 80 &&
         (
             particleA instanceof Molecule && particleB instanceof Atom
+            &&
+            particleB.getCountOfMissE() != 0
             &&
             particleA.getCountOfMissE() - particleB.getCountOfMissE() >= 0
         )) {
@@ -158,6 +160,19 @@ function particlesInteraction(particleA: ParticleI, particleB: ParticleI): { A: 
         particleA.addAtom(particleB);
 
         return {molecule: particleA};
+    }
+
+    //
+    if(distance < 80) {
+        particleA.setCoords({
+            x: particleA.getCoords().x + 10*moveX,
+            y: particleA.getCoords().y + 10*moveY,
+        });
+
+        particleB.setCoords({
+            x: particleB.getCoords().x - 10*moveX,
+            y: particleB.getCoords().y - 10*moveY,
+        });
     }
 
     return {
