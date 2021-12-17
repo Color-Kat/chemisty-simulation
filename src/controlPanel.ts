@@ -28,6 +28,10 @@ export default function (panel: HTMLElement, callback: (id: number)=> void){
         panel.append(atomElem);
     }
 
+    panel.querySelector('#toggle-panel').addEventListener('click', ()=> {
+        panel.classList.toggle('active');
+    })
+
     document.querySelectorAll('input[type="radio"]').forEach(radio => {
         radio.addEventListener('change', function (){
             callback(this.value);

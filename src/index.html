@@ -19,7 +19,8 @@
 
         #panel{
             width: 100%;
-            overflow-x: scroll;
+            transition: all .5s ease-out;
+            /*overflow-x: scroll;*/
             /*height: 450px;*/
             background: rgba(0, 0, 0, 0.30);
             position: absolute;
@@ -68,11 +69,43 @@
             position: absolute;
             opacity: 0;
         }
+
+        #toggle-panel {
+            position: absolute;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.20);
+            justify-content: center;
+            z-index: 10;
+            border: none;
+            outline: none;
+            height: 30px;
+
+            bottom: -30px;
+            transition: all .05s ease-in;
+        }
+
+        #toggle-panel span {
+            width: 50px;
+            height: 100%;
+            line-height: 25px;
+            font-size: 25px;
+            display: inline-block;
+        }
+
+        #panel:not(.active) .chem_elem{
+            transform: scale(0, 0);
+            display: none;
+        }
+
+        #panel:not(.active) #toggle-panel span{
+            transform: rotate(180deg);
+        }
     </style>
 </head>
 <body>
-    <div id="panel">
+    <div id="panel" class="active">
 
+        <button id="toggle-panel"><span>&#9757;</span></button>
     </div>
 
     <canvas id="space">Your browser doesn't support canvas, you are very old;)</canvas>

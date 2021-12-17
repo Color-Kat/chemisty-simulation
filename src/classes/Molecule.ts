@@ -72,9 +72,9 @@ export default class Molecule implements ParticleI {
 
         for (let i_atom of this.atoms) {
             let atom = new Atom(i_atom);
+            // console.log(atom, atom.getCountOfMissE())
             missE -= atom.getCountOfMissE();
         }
-
 
         return missE;
         return Math.abs(missE);

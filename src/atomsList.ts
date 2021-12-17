@@ -76,4 +76,25 @@ export default [
         charge: 0,
         Z: 13,
     },
+    {
+        name: 'Si',
+        color: '#2b2c30',
+        mass: 28,
+        charge: 0,
+        Z: 14,
+    },
+    {
+        name: 'P',
+        color: '#8ccf74',
+        mass: 31,
+        charge: 0,
+        Z: 15,
+    },
+    {
+        name: 'S',
+        color: '#a6a10a',
+        mass: 32,
+        charge: 0,
+        Z: 16,
+    },
 ];

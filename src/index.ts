@@ -120,22 +120,39 @@ function particlesInteraction(particleA: ParticleI, particleB: ParticleI): { A: 
     });
 
 
-    // molecule and atom
-    if (distance < 50 &&
+    // molecule + atom
+    // if (distance < 50 &&
+    //
+    //     particleA instanceof Molecule && particleB instanceof Atom)
+    //     console.log(particleA, particleA.getCountOfMissE(), particleB.getCountOfLastE());
 
-        particleA instanceof Molecule && particleB instanceof Atom)
-        console.log(particleA, particleA.getCountOfMissE(), particleB.getCountOfLastE());
+    if (
+        distance < 50 &&
+        (
+            particleA instanceof Molecule && particleB instanceof Molecule
+        )) console.log( particleA.getCountOfMissE(), particleB.getCountOfMissE())
+
+    // molecule + molecule
+    if (
+        distance < 50 &&
+        (
+            particleA instanceof Molecule && particleB instanceof Molecule
+            &&
+            particleB.getCountOfMissE() != 0
+            &&
+            particleA.getCountOfMissE() - particleB.getCountOfMissE() >= 0
+        )) {
+
+        return {molecule: new Molecule([...(particleA as Molecule).atoms, ... (particleB  as Molecule).atoms])};
+    }
+
 
     if (
         distance < 50 &&
         (
             particleA instanceof Molecule && particleB instanceof Atom
             &&
-            particleA.getCountOfMissE() - particleB.getCountOfLastE() >= 0
-            // (particleA.getCountOfMissE() - particleB.getCountOfLastE() >= 0 ||
-            //     particleB.getCountOfMissE() - particleA.getCountOfLastE() >= 0)
-            // (particleA.getCountOfMissE() - particleB.getCountOfMissE() >= 0 ||
-            // particleB.getCountOfMissE() - particleA.getCountOfMissE() >= 0)
+            particleA.getCountOfMissE() - particleB.getCountOfMissE() >= 0
         )) {
 
         particleA.addAtom(particleB);

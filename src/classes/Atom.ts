@@ -45,6 +45,8 @@ export default class Atom implements ParticleI {
         }
         if (e <= 2) miss = 2 - e;
 
+        // console.log(miss);
+
         return Math.abs(miss);
     }
 
