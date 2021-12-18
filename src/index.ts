@@ -15,46 +15,7 @@ let ctx = canvas.getContext('2d');
 let renderer = new Renderer(ctx, w, h, '#0f1c3d');
 
 let particles: (Atom | Molecule)[] = [
-    // new Atom({
-    //     name: 'H',
-    //     color: 'white',
-    //     mass: 1,
-    //     Z: 1,
-    //     charge: 0,
-    //     coords: {x: 600, y: 900}
-    // }),
-    // new Atom({
-    //     name: 'H',
-    //     color: 'white',
-    //     mass: 1,
-    //     charge: 0,
-    //     Z: 1,
-    //     coords: {x: 600, y: 800}
-    // }),
-    // new Atom({
-    //     name: 'H',
-    //     color: 'white',
-    //     mass: 1,
-    //     charge: 0,
-    //     Z: 1,
-    //     coords: {x: 0, y: 0}
-    // }),
-    // new Atom({
-    //     name: 'Li',
-    //     color: 'gray',
-    //     mass: 9,
-    //     charge: 0,
-    //     Z: 3,
-    //     coords: {x: 100, y: 200}
-    // }),
-    // new Atom({
-    //     name: 'O',
-    //     color: 'red',
-    //     mass: 16,
-    //     charge: 0,
-    //     Z: 8,
-    //     coords: {x: 700, y: 100}
-    // }),
+
 ];
 
 let selectedParticle: any = null;
@@ -62,6 +23,11 @@ let selectedParticle: any = null;
 controlPanel(document.getElementById('panel'), (id) => {
     selectedParticle = atomsList[id];
 });
+
+// clear button
+document.querySelector('#clear').addEventListener('click',()=>{
+    particles = [];
+})
 
 canvas.addEventListener('click', function (e) {
     if (selectedParticle)
@@ -174,6 +140,8 @@ function particlesInteraction(particleA: ParticleI, particleB: ParticleI): { A: 
             y: particleB.getCoords().y - 10*moveY,
         });
     }
+
+
 
     return {
         A: particleA,
